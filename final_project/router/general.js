@@ -70,7 +70,15 @@ public_users.get('/title/:title',function (req, res) {
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
-
+  const isbn = req.params?.isbn;
+  if(isbn){
+    const findIsbn = Object.keys(books).find(bookIsbn===isbn)
+    if(findIsbn){
+      return res.status(200).json(books[findIsbn])
+    }
+    return res.status(404).json({message:"Not found"})
+  }
+  return res.status(400).json({message:"Provide the book isbn"})
 });
 
 module.exports.general = public_users;
