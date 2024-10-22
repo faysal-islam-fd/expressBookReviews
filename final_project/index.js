@@ -12,7 +12,9 @@ app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUni
 
 app.use("/customer/auth/*", function auth(req,res,next){
 //Write the authentication mechanism here
+console.log(req.session)
 if (req.session && req.session.token) {
+    
     jwt.verify(req.session.token, 'fingerprint_customer', (err, decoded) => {
         if (err) {
             return res.status(401).json({ message: 'Unauthorized access' });

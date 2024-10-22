@@ -10,9 +10,7 @@ const isValid = (username)=>{
 }
 
 
-const authenticatedUser = (username,password)=>{ //returns boolean
-//write code to check if username and password match the one we have in records.
-}
+const authenticatedUser = (username,password)=>{}
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
@@ -26,7 +24,7 @@ regd_users.post("/login", (req,res) => {
 
     const token = jwt.sign({username}, 'fingerprint_customer');
     req.session.token = token;
-    return res.status(200).json({username,password})
+    return res.status(200).json(req.session)
  
   }
   return res.status(401).json({message:"Invalid credentials"})
@@ -34,8 +32,28 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = req.params?.isbn;
+  const session = req.session
+  
+  if(isbn){
+    const {review} = req.body;
+    if(review){
+      if(session && session.token){
+        jwt.verify(session.token, 'fingerprint_customer', (err, decoded) => {
+          if (err) {
+              return res.status(401).json({ message: 'Unauthorized access' });
+          } else {
+            books[isbn].reviews[decoded.username] = review;
+            return res.status(200).json({message:"Review added successfully"})
+          }
+        });
+      }else{
+        return res.status(401).json({message:"Unauthorized access"})
+      }
+    }else{
+      return res.status(400).json({message:"Please provide the review"})
+    }
+  }
 });
 
 module.exports.authenticated = regd_users;
