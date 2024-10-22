@@ -6,6 +6,13 @@ const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
+  const {username,password} = req.body;
+  if(!username || !password){
+    return res.status(400).json({message:"All fields are required"})
+  }
+  
+  users.push({username,password})
+  return res.status(200).json({message:"Successfully Registered.Now you can login"})
   //Write your code here
   return res.status(300).json({message: "Yet to be implemented"});
 });
@@ -71,8 +78,10 @@ public_users.get('/title/:title',function (req, res) {
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
   const isbn = req.params?.isbn;
+  console.log(isbn);
+  
   if(isbn){
-    const findIsbn = Object.keys(books).find(bookIsbn===isbn)
+    const findIsbn = Object.keys(books).find(bookIsbn=> bookIsbn===isbn)
     if(findIsbn){
       return res.status(200).json(books[findIsbn])
     }
